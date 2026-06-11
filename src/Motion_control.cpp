@@ -705,20 +705,24 @@ void Motion_control_run(int error)
     MC_PULL_ONLINE_read();
 
     AS5600_distance_updata();
+    static uint64_t offline_report_time[4] = {0};
     for (int i = 0; i < 4; i++)
     {
-        if (MC_ONLINE_key_stu[i] == 0) {
-            set_filament_online(i, false);
-        } else if (MC_ONLINE_key_stu[i] == 1) {
+        if (MC_ONLINE_key_stu[i] == 1) {
+            offline_report_time[i] = 0;
             set_filament_online(i, true);
         } else if (MC_ONLINE_key_stu[i] == 3 && filament_now_position[i] == filament_using) {
-            // 如果 仅内侧触发且在使用中，先不离线
+            offline_report_time[i] = 0;
             set_filament_online(i, true);
         } else if (filament_now_position[i] == filament_redetect || (filament_now_position[i] == filament_pulling_back)) {
-            // 如果 处于退料返回，或退料中，先不离线
+            offline_report_time[i] = 0;
             set_filament_online(i, true);
         } else {
-            set_filament_online(i, false);
+            uint64_t now = get_time64();
+            if (offline_report_time[i] == 0)
+                offline_report_time[i] = now;
+            else if (now - offline_report_time[i] >= 100)
+                set_filament_online(i, false);
         }
     }
     /*
