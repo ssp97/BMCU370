@@ -20,7 +20,7 @@ int MC_ONLINE_key_stu[4] = {0, 0, 0, 0};
 // 电压控制相关常量
 float PULL_voltage_up = 1.85f;   // 状态 压力高 红灯
 float PULL_voltage_down = 1.45f; // 状态 压力低 蓝灯
-#define PULL_VOLTAGE_SEND_MAX 1.7f
+#define PULL_VOLTAGE_SEND_MAX 1.8f
 // 微动触发控制相关常量
 bool Assist_send_filament[4] = {false, false, false, false};
 bool pull_state_old = false; // 上次触发状态——True：未触发，False：进料完成
@@ -32,7 +32,7 @@ float_t P1X_OUT_filament_meters = 200.0f; // 内置200mm 外置700mm
 float_t last_total_distance[4] = {0.0f, 0.0f, 0.0f, 0.0f}; // 初始化退料开始时的距离
 // bool filament_channel_inserted[4]={false,false,false,false};//通道是否插入
 // 使用双微动
-#define is_two false
+#define is_two true
 
 void MC_PULL_ONLINE_read()
 {
@@ -375,7 +375,7 @@ public:
                     if (device_type == BambuBus_AMS_lite)
                     {
                         if (MC_PULL_stu_raw[CHx] < PULL_VOLTAGE_SEND_MAX) // 压力主动到这个位置
-                            speed_set = 30;
+                            speed_set = 50;
                         else
                             speed_set = 0; // 原版这里是 10
                     }

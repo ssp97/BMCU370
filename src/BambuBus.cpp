@@ -758,15 +758,15 @@ unsigned char Cxx_res[] = {0x3D, 0xE0, 0x2C, 0x1A, 0x03,
 void send_for_motion_short(unsigned char *buf, int length)
 {
     Cxx_res[1] = 0xC0 | (package_num << 3);
-    unsigned char AMS_num = buf[5];
+        unsigned char AMS_num = buf[5];
     if (AMS_num != BambuBus_AMS_num)
         return;
-    // unsigned char statu_flags = buf[6];
+    unsigned char statu_flags = buf[6];
     unsigned char read_num = buf[7];
-    // unsigned char fliment_motion_flag = buf[8];
+    unsigned char fliment_motion_flag = buf[8];
 
-    // if (!set_motion(AMS_num, read_num, statu_flags, fliment_motion_flag))
-    //     return;
+    if (!set_motion(read_num, statu_flags, fliment_motion_flag))
+        return;
 
     set_motion_res_datas(Cxx_res + 5, read_num);
     package_send_with_crc(Cxx_res, sizeof(Cxx_res));
